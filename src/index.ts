@@ -1,26 +1,66 @@
-import { NativeModulesProxy, EventEmitter, Subscription } from 'expo-modules-core';
+import { EventEmitter, Subscription } from "expo-modules-core";
 
-// Import the native module. On web, it will be resolved to MotionActivityTracker.web.ts
-// and on native platforms to MotionActivityTracker.ts
-import MotionActivityTrackerModule from './MotionActivityTrackerModule';
-import MotionActivityTrackerView from './MotionActivityTrackerView';
-import { ChangeEventPayload, MotionActivityTrackerViewProps } from './MotionActivityTracker.types';
+import { MotionActivityTrackerViewProps } from "./MotionActivityTracker.types";
+import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
 
-// Get the native constant value.
-export const PI = MotionActivityTrackerModule.PI;
-
-export function hello(): string {
-  return MotionActivityTrackerModule.hello();
+enum Confidence {
+  "low" = 0,
+  "medium" = 1,
+  "high" = 2,
 }
 
-export async function setValueAsync(value: string) {
-  return await MotionActivityTrackerModule.setValueAsync(value);
+export type HistoricalActivity = {
+  walking: boolean;
+  running: boolean;
+  automotive: boolean;
+  stationary: boolean;
+  unknown: boolean;
+  timestamp: number;
+  confidence: Confidence;
+};
+
+enum MotionState {
+  UNKNOWN = "unknown",
+  WALKING = "walking",
+  RUNNING = "running",
+  AUTOMOTIVE = "automotive",
+  STATIONARY = "stationary",
 }
 
-const emitter = new EventEmitter(MotionActivityTrackerModule ?? NativeModulesProxy.MotionActivityTracker);
+export type MotionStateChangeEvent = {
+  state: MotionState;
+};
 
-export function addChangeListener(listener: (event: ChangeEventPayload) => void): Subscription {
-  return emitter.addListener<ChangeEventPayload>('onChange', listener);
+const emitter = new EventEmitter(MotionActivityTrackerModule);
+
+export async function startTracking(): Promise<string> {
+  return await MotionActivityTrackerModule.startTracking();
 }
 
-export { MotionActivityTrackerView, MotionActivityTrackerViewProps, ChangeEventPayload };
+export function stopTracking(): string {
+  return MotionActivityTrackerModule.stopTracking();
+}
+
+export function addMotionStateChangeListener(
+  listener: (event: MotionStateChangeEvent) => void,
+): Subscription {
+  return emitter.addListener<MotionStateChangeEvent>(
+    "onMotionStateChange",
+    listener,
+  );
+}
+
+export async function getHistoricalData(
+  startDate: Date,
+  endDate: Date,
+): Promise<HistoricalActivity[]> {
+  const startTimestamp = startDate.getTime(),
+    endTimestamp = endDate.getTime();
+
+  return await MotionActivityTrackerModule.getHistoricalData(
+    startTimestamp,
+    endTimestamp,
+  );
+}
+
+export { MotionActivityTrackerViewProps };

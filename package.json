@@ -1,5 +1,5 @@
 {
-  "name": "motion-activity-tracker",
+  "name": "react-native-motion-activity-tracker",
   "version": "0.1.0",
   "description": "My new module",
   "main": "build/index.js",
