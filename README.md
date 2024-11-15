@@ -27,6 +27,7 @@ A React Native library to access and track motion activity data using Apple's Co
    ```bash
    npm install react-native-motion-activity-tracker
 
+```
 {
   "expo": {
     "ios": {
@@ -36,9 +37,10 @@ A React Native library to access and track motion activity data using Apple's Co
     },
   }
 }
+```
 
 
-Usage
+# Examples
 
 ```TypeScript
 import * as MotionActivityTracker from "motion-activity-tracker";
@@ -152,7 +154,7 @@ export default function App() {
 
 
 # Bare React Native Workflow
-    For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
+For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
 
 ### Add the package to your npm dependencies
 
