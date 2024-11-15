@@ -2,15 +2,34 @@ import CoreMotion
 import ExpoModulesCore
 
 
+
 public class MotionActivityTrackerModule: Module {
   private let motionActivityManager = CMMotionActivityManager()
   private var hasListeners = false
 
-  public func definition() -> ModuleDefinition {
-    Name("MotionActivityTracker")
-    
-    // Define the event that can be emitted
-    Events("onMotionStateChange")
+    public func definition() -> ModuleDefinition {
+        Name("MotionActivityTracker")
+        
+        // Define the event that can be emitted
+        Events("onMotionStateChange")
+        
+        // Check permissions
+        AsyncFunction("checkMotionActivityAuthStatus") { (promise: Promise) in
+            guard CMMotionActivityManager.isActivityAvailable() else {
+                // Motion activity is not available on this device
+                promise.resolve(CMAuthorizationStatus.denied.rawValue)
+                return
+            }
+
+            // Check the current authorization status directly
+            let authStatus = CMMotionActivityManager.authorizationStatus()
+              switch authStatus {
+              case .notDetermined, .restricted, .denied, .authorized:
+                  promise.resolve(authStatus.rawValue)
+              @unknown default:
+                  promise.reject("E_UNKNOWN_STATUS", "Unknown authorization status")
+              }
+        }
 
     // Get historical data query
     AsyncFunction("getHistoricalData") { (startDate: Date, endDate: Date, promise: Promise) in

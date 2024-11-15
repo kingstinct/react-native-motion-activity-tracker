@@ -1,2 +1,5 @@
-<manifest>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+         package="expo.modules.motionactivitytracker">
+
+   <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 </manifest>

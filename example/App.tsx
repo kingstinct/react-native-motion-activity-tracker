@@ -13,7 +13,7 @@ export default function App() {
 
   useEffect(() => {
     const setActivityHistoricalData = async () => {
-      const data = await MotionActivityTracker.getHistoricalData(
+      const data = await MotionActivityTracker.getHistoricalDataIos(
         startDate,
         endDate,
       );
@@ -61,6 +61,17 @@ export default function App() {
     setTracking(false); // Update the tracking state
   };
 
+  const handleGetPermissionStatus = async () => {
+    const status = await MotionActivityTracker.checkMotionActivityAuthStatus();
+    setMessage(`Permission status: ${status}`);
+  };
+
+  const handleRequestPermissions = async () => {
+    const status =
+      await MotionActivityTracker.requestActivityPermissionsAsync();
+    setMessage(`Requested permission status: ${status}`);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{message}</Text>
@@ -68,6 +79,11 @@ export default function App() {
         title={tracking ? "Stop Tracking" : "Start Tracking"}
         onPress={tracking ? handleStopTracking : handleStartTracking}
       />
+      <Button
+        title="Get permission status"
+        onPress={handleGetPermissionStatus}
+      />
+      <Button title="Request permissions" onPress={handleRequestPermissions} />
       {data && data.length > 0 && (
         <View>
           {/* Get the latest entry by finding the one with the maximum timestamp */}
@@ -115,6 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+    gap: 16,
   },
   text: {
     fontSize: 18,
