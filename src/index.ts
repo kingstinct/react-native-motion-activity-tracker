@@ -14,17 +14,26 @@ export type HistoricalActivity = {
   running: boolean;
   automotive: boolean;
   stationary: boolean;
+  cycling: boolean;
   unknown: boolean;
   timestamp: number;
   confidence: Confidence;
 };
 
-enum MotionState {
+export enum MotionState {
   UNKNOWN = "unknown",
   WALKING = "walking",
   RUNNING = "running",
   AUTOMOTIVE = "automotive",
   STATIONARY = "stationary",
+  CYCLING = "cycling",
+}
+
+export enum MotionActivityAuthStatus {
+  NOT_DETERMINED = 0,
+  RESTRICTED = 1,
+  DENIED = 2,
+  AUTHORIZED = 3,
 }
 
 export type MotionStateChangeEvent = {
@@ -61,6 +70,12 @@ export async function getHistoricalData(
     startTimestamp,
     endTimestamp,
   );
+}
+
+export async function checkMotionActivityAuthStatus(): Promise<MotionActivityAuthStatus> {
+  const status =
+    await MotionActivityTrackerModule.checkMotionActivityAuthStatus();
+  return status as MotionActivityAuthStatus;
 }
 
 export { MotionActivityTrackerViewProps };
