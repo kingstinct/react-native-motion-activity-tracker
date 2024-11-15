@@ -12,7 +12,7 @@ A React Native library to access and track motion activity data using Apple's Co
 - Check motion activity authorization status.
 - Start and stop real-time motion tracking.
 - Fetch historical activity data.
-- Built for iOS with Core Motion.
+- Built for iOS  with Core Motion API & for android with Activity Recognition API
 
 **Note**: This library requires a custom dev client when using with Expo.
 
@@ -28,6 +28,8 @@ A React Native library to access and track motion activity data using Apple's Co
    npm install react-native-motion-activity-tracker
 
 ```
+2. Add this to ur app.son
+
 {
   "expo": {
     "ios": {
