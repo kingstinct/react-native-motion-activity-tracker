@@ -62,6 +62,11 @@ class MotionActivityTrackerModule : Module() {
     UNKNOWN
   }
 
+  enum class Confidence {
+    UNKNOWN,
+  }
+
+  private var receiver: BroadcastReceiver? = null
   private lateinit var context: Context
 
   private val pendingIntent: PendingIntent by lazy {
@@ -78,38 +83,6 @@ class MotionActivityTrackerModule : Module() {
           PendingIntent.FLAG_UPDATE_CURRENT
       }
     )
-  }
-
-  private val receiver = object : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-      if (ActivityTransitionResult.hasResult(intent)) {
-        val result = ActivityTransitionResult.extractResult(intent)!!
-
-        for (event in result.transitionEvents) {
-          val activityType = when(event.activityType) {
-            DetectedActivity.IN_VEHICLE -> ActivityType.AUTOMOTIVE
-            DetectedActivity.WALKING -> ActivityType.WALKING
-            DetectedActivity.RUNNING -> ActivityType.RUNNING
-            DetectedActivity.ON_BICYCLE -> ActivityType.CYCLING
-            DetectedActivity.STILL -> ActivityType.STATIONARY
-            else -> ActivityType.UNKNOWN
-          }
-
-          val transitionType = when(event.transitionType) {
-            ActivityTransition.ACTIVITY_TRANSITION_ENTER -> TransitionType.ENTER
-            ActivityTransition.ACTIVITY_TRANSITION_EXIT -> TransitionType.EXIT
-            else -> TransitionType.UNKNOWN
-          }
-
-          sendEvent(ACTIVITY_TRANSITION_EVENT,
-            mapOf(
-              "state" to activityType,
-              "transitionType" to transitionType
-            )
-          )
-        }
-      }
-    }
   }
 
   override fun definition() = ModuleDefinition {
@@ -163,10 +136,23 @@ class MotionActivityTrackerModule : Module() {
       return@Coroutine stopActivityTransitionMonitoring()
     }
 
-    Function("simulateActivityTransition") { activityType: String, transitionType: String ->
-      sendEvent(ACTIVITY_TRANSITION_EVENT, mapOf (
-        "activityType" to activityType,
-        "transitionType" to transitionType
+    Function("simulateActivityTransition") {
+      activityType: String,
+      transitionType: String,
+      timestamp: String,
+      confidence: String,
+      ->
+      val events = listOf(
+        mapOf(
+          "activityType" to activityType,
+          "transitionType" to transitionType,
+          "timestamp" to timestamp.toLong(),
+          "confidence" to confidence
+        )
+      )
+      sendEvent(ACTIVITY_TRANSITION_EVENT,
+        mapOf (
+          "events" to events
       ))
     }
   }
@@ -186,6 +172,42 @@ class MotionActivityTrackerModule : Module() {
   // REGISTER RECEIVER
   @SuppressLint("UnspecifiedRegisterReceiverFlag")
   private fun registerReceiver() {
+    receiver = object : BroadcastReceiver() {
+      override fun onReceive(context: Context, intent: Intent) {
+        if (ActivityTransitionResult.hasResult(intent)) {
+          val result = ActivityTransitionResult.extractResult(intent)!!
+
+          val formattedEvents = result.transitionEvents.map { event ->
+            mapOf(
+              "activityType" to  when(event.activityType) {
+                DetectedActivity.IN_VEHICLE -> ActivityType.AUTOMOTIVE
+                DetectedActivity.WALKING -> ActivityType.WALKING
+                DetectedActivity.RUNNING -> ActivityType.RUNNING
+                DetectedActivity.ON_BICYCLE -> ActivityType.CYCLING
+                DetectedActivity.STILL -> ActivityType.STATIONARY
+                else -> ActivityType.UNKNOWN
+              },
+
+              "transitionType" to when(event.transitionType) {
+                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> TransitionType.ENTER
+                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> TransitionType.EXIT
+                else -> TransitionType.UNKNOWN
+              },
+
+              "confidence" to  Confidence.UNKNOWN,
+              "timestamp" to event.elapsedRealTimeNanos
+            )
+          }
+
+          sendEvent(ACTIVITY_TRANSITION_EVENT,
+            mapOf(
+              "events" to formattedEvents,
+            )
+          )
+        }
+      }
+    }
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       context.registerReceiver(
         receiver,
@@ -202,6 +224,7 @@ class MotionActivityTrackerModule : Module() {
 
   private fun unregisterReceiver() {
     context.unregisterReceiver(receiver)
+    receiver = null
   }
 
   // START/STOP MONITORING

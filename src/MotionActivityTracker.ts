@@ -6,6 +6,7 @@ import {
   ActivityChangeEvent,
   TrackingStatus,
   HistoricalActivity,
+  EventPayload,
 } from "./MotionActivityTracker.types";
 import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
 
@@ -56,12 +57,9 @@ export async function requestPermissionsAsyncAndroid(): Promise<PermissionStatus
 const emitter = new EventEmitter(MotionActivityTrackerModule);
 
 export function addMotionStateChangeListener(
-  listener: (event: ActivityChangeEvent[]) => void,
+  listener: (payload: EventPayload) => void,
 ): Subscription {
-  return emitter.addListener<ActivityChangeEvent[]>(
-    "onMotionStateChange",
-    listener,
-  );
+  return emitter.addListener<EventPayload>("onMotionStateChange", listener);
 }
 
 export async function startTracking(): Promise<TrackingStatus> {
@@ -76,6 +74,8 @@ export function simulateActivityTransition(event: ActivityChangeEvent): void {
   return MotionActivityTrackerModule.simulateActivityTransition(
     event.activityType,
     event.transitionType,
+    event.timestamp.toString(),
+    event.confidence,
   );
 }
 

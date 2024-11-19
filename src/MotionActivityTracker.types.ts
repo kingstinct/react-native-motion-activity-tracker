@@ -52,3 +52,7 @@ export type ActivityChangeEvent = {
   confidence: Confidence;
   timestamp: number;
 };
+
+export type EventPayload = {
+  events: ActivityChangeEvent[];
+};

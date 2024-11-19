@@ -46,25 +46,23 @@ export default function App() {
 
   useEffect(() => {
     const subscription = MotionActivityTracker.addMotionStateChangeListener(
-      (event) => {
+      (payload) => {
         // Log the new state to confirm the subscription is working
-        console.log("New Motion State:", event);
+        console.log("New Motion State:", payload);
 
-        const latestEvent = event[0];
+        payload.events.forEach((event) => {
+          if (
+            event.transitionType === MotionActivityTracker.TransitionType.ENTER
+          ) {
+            setEnterTransition(event.activityType);
+          }
 
-        if (
-          latestEvent.transitionType ===
-          MotionActivityTracker.TransitionType.ENTER
-        ) {
-          setEnterTransition(latestEvent.activityType);
-        }
-
-        if (
-          latestEvent.transitionType ===
-          MotionActivityTracker.TransitionType.EXIT
-        ) {
-          setExitTransition(latestEvent.activityType);
-        }
+          if (
+            event.transitionType === MotionActivityTracker.TransitionType.EXIT
+          ) {
+            setExitTransition(event.activityType);
+          }
+        });
       },
     );
 
@@ -105,7 +103,7 @@ export default function App() {
       activityType: MotionActivityTracker.ActivityType.WALKING,
       transitionType: MotionActivityTracker.TransitionType.ENTER,
       confidence: MotionActivityTracker.Confidence.UNKNOWN,
-      timestamp: new Date().getDate(),
+      timestamp: new Date().getTime(),
     };
 
     MotionActivityTracker.simulateActivityTransition(event);
