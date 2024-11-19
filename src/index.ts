@@ -1,67 +1,19 @@
 import { EventEmitter, Subscription } from "expo-modules-core";
 import { PermissionsAndroid, Platform } from "react-native";
 
-import { MotionActivityTrackerViewProps } from "./MotionActivityTracker.types";
+import {
+  PermissionStatus,
+  ActivityChangeEvent,
+  TrackingStatus,
+  HistoricalActivity,
+} from "./MotionActivityTracker.types";
 import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
-
-export type HistoricalActivity = {
-  walking: boolean;
-  running: boolean;
-  automotive: boolean;
-  stationary: boolean;
-  cycling: boolean;
-  unknown: boolean;
-  timestamp: number;
-  confidence: Confidence;
-};
-
-enum Confidence {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-}
-
-export enum ActivityType {
-  UNKNOWN = "UNKNOWN",
-  WALKING = "WALKING",
-  RUNNING = "RUNNING",
-  AUTOMOTIVE = "AUTOMOTIVE",
-  STATIONARY = "STATIONARY",
-  CYCLING = "CYCLING",
-}
-
-export enum TransitionType {
-  ENTER = "ENTER",
-  EXIT = "EXIT",
-}
-
-export enum PermissionStatus {
-  NOT_DETERMINED = "NOT_DETERMINED",
-  RESTRICTED = "RESTRICTED",
-  DENIED = "DENIED",
-  AUTHORIZED = "AUTHORIZED",
-  UNAVAILABLE = "UNAVAILABLE",
-  PLATFORM_NOT_SUPPORTED = "PLATFORM_NOT_SUPPORTED",
-}
-
-export enum TrackingStatus {
-  STARTED = "STARTED",
-  STOPPED = "STOPPED",
-  FAILED = "FAILED",
-  UNAUTHORIZED = "UNAUTHORIZED",
-}
-
-export type ActivityChangeEvent = {
-  activityType: ActivityType;
-  transitionType: TransitionType;
-};
 
 export const isGooglePlayServicesAvailable: boolean =
   MotionActivityTrackerModule.isGooglePlayServicesAvailable ?? false;
 
 export async function getPermissionStatusAsync(): Promise<PermissionStatus> {
-  const status = await MotionActivityTrackerModule.getPermissionStatus();
-  return status;
+  return MotionActivityTrackerModule.getPermissionStatus();
 }
 
 export async function requestPermissionsAsyncAndroid(): Promise<PermissionStatus> {
@@ -104,9 +56,9 @@ export async function requestPermissionsAsyncAndroid(): Promise<PermissionStatus
 const emitter = new EventEmitter(MotionActivityTrackerModule);
 
 export function addMotionStateChangeListener(
-  listener: (event: ActivityChangeEvent) => void,
+  listener: (event: ActivityChangeEvent[]) => void,
 ): Subscription {
-  return emitter.addListener<ActivityChangeEvent>(
+  return emitter.addListener<ActivityChangeEvent[]>(
     "onMotionStateChange",
     listener,
   );
@@ -143,5 +95,3 @@ export async function getHistoricalDataIos(
 
   return [];
 }
-
-export { MotionActivityTrackerViewProps };
