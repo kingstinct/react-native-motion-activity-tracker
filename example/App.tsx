@@ -50,16 +50,20 @@ export default function App() {
         // Log the new state to confirm the subscription is working
         console.log("New Motion State:", event);
 
+        const latestEvent = event[0];
+
         if (
-          event.transitionType === MotionActivityTracker.TransitionType.ENTER
+          latestEvent.transitionType ===
+          MotionActivityTracker.TransitionType.ENTER
         ) {
-          setEnterTransition(event.activityType);
+          setEnterTransition(latestEvent.activityType);
         }
 
         if (
-          event.transitionType === MotionActivityTracker.TransitionType.EXIT
+          latestEvent.transitionType ===
+          MotionActivityTracker.TransitionType.EXIT
         ) {
-          setExitTransition(event.activityType);
+          setExitTransition(latestEvent.activityType);
         }
       },
     );
@@ -100,7 +104,10 @@ export default function App() {
     const event: MotionActivityTracker.ActivityChangeEvent = {
       activityType: MotionActivityTracker.ActivityType.WALKING,
       transitionType: MotionActivityTracker.TransitionType.ENTER,
+      confidence: MotionActivityTracker.Confidence.UNKNOWN,
+      timestamp: new Date().getDate(),
     };
+
     MotionActivityTracker.simulateActivityTransition(event);
   };
 

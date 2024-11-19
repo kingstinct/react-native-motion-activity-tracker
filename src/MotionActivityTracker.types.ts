@@ -50,4 +50,5 @@ export type ActivityChangeEvent = {
   activityType: ActivityType;
   transitionType: TransitionType;
   confidence: Confidence;
+  timestamp: number;
 };
