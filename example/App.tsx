@@ -1,6 +1,6 @@
 import * as MotionActivityTracker from "motion-activity-tracker";
 import React, { useEffect, useState } from "react";
-import { Text, View, Button, StyleSheet } from "react-native";
+import { Text, View, Button, StyleSheet, Platform } from "react-native";
 
 export default function App() {
   const [message, setMessage] = useState("Initializing..."),
@@ -8,12 +8,28 @@ export default function App() {
     [data, setData] = useState<
       MotionActivityTracker.HistoricalActivity[] | undefined
     >(),
+    [permissionStatus, setPermissionStatus] =
+      useState<MotionActivityTracker.PermissionStatus>(
+        MotionActivityTracker.PermissionStatus.NOT_DETERMINED,
+      ),
+    [trackingStatus, setTrackingStatus] =
+      useState<MotionActivityTracker.TrackingStatus>(
+        MotionActivityTracker.TrackingStatus.STOPPED,
+      ),
+    [enterTransition, setEnterTransition] =
+      useState<MotionActivityTracker.ActivityType>(
+        MotionActivityTracker.ActivityType.UNKNOWN,
+      ),
+    [exitTransition, setExitTransition] =
+      useState<MotionActivityTracker.ActivityType>(
+        MotionActivityTracker.ActivityType.UNKNOWN,
+      ),
     startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     endDate = new Date();
 
   useEffect(() => {
     const setActivityHistoricalData = async () => {
-      const data = await MotionActivityTracker.getHistoricalData(
+      const data = await MotionActivityTracker.getHistoricalDataIos(
         startDate,
         endDate,
       );
@@ -22,17 +38,29 @@ export default function App() {
         setData(data);
       }
     };
-    setActivityHistoricalData();
+
+    if (Platform.OS === "ios") {
+      setActivityHistoricalData();
+    }
   }, []);
 
   useEffect(() => {
     const subscription = MotionActivityTracker.addMotionStateChangeListener(
       (event) => {
         // Log the new state to confirm the subscription is working
-        console.log("New Motion State:", event.state);
+        console.log("New Motion State:", event);
 
-        // Update the message with the current state
-        setMessage(`Tracking started: ${event.state}`);
+        if (
+          event.transitionType === MotionActivityTracker.TransitionType.ENTER
+        ) {
+          setEnterTransition(event.activityType);
+        }
+
+        if (
+          event.transitionType === MotionActivityTracker.TransitionType.EXIT
+        ) {
+          setExitTransition(event.activityType);
+        }
       },
     );
 
@@ -45,9 +73,7 @@ export default function App() {
     console.log("Starting tracking...");
     try {
       const result = await MotionActivityTracker.startTracking();
-      console.log("Tracking started: ", result);
-      setMessage(`Tracking started: ${result}`);
-      setTracking(true); // Update the tracking state
+      setTrackingStatus(result);
     } catch (error) {
       setMessage(`Error: ${error}`);
       console.error(error);
@@ -55,19 +81,50 @@ export default function App() {
   };
 
   // Handle stop tracking
-  const handleStopTracking = () => {
-    MotionActivityTracker.stopTracking();
-    setMessage("Tracking stopped");
-    setTracking(false); // Update the tracking state
+  const handleStopTracking = async () => {
+    const result = await MotionActivityTracker.stopTracking();
+    setTrackingStatus(result);
+  };
+
+  const handleGetPermissionStatus = async () => {
+    const status = await MotionActivityTracker.getPermissionStatusAsync();
+    setPermissionStatus(status);
+  };
+
+  const handleRequestPermissions = async () => {
+    const result = await MotionActivityTracker.requestPermissionsAsyncAndroid();
+    setPermissionStatus(result);
+  };
+
+  const handleSimulateTransition = () => {
+    const event: MotionActivityTracker.ActivityChangeEvent = {
+      activityType: MotionActivityTracker.ActivityType.WALKING,
+      transitionType: MotionActivityTracker.TransitionType.ENTER,
+    };
+    MotionActivityTracker.simulateActivityTransition(event);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{message}</Text>
+      <Text
+        style={styles.text}
+      >{`Is Google Play available: ${MotionActivityTracker.isGooglePlayServicesAvailable}`}</Text>
+      <Text
+        style={styles.text}
+      >{`Permission Status: ${permissionStatus}`}</Text>
+
+      <Text style={styles.text}>{`Tracking Status: ${trackingStatus}`}</Text>
+      <Text style={styles.text}>{`Enter Transition: ${enterTransition}`}</Text>
+      <Text style={styles.text}>{`Exit Transition: ${exitTransition}`}</Text>
+
       <Button
-        title={tracking ? "Stop Tracking" : "Start Tracking"}
-        onPress={tracking ? handleStopTracking : handleStartTracking}
+        title="Get Permission Status"
+        onPress={handleGetPermissionStatus}
       />
+      <Button title="Request Permissions" onPress={handleRequestPermissions} />
+      <Button title="Start Tracking" onPress={handleStartTracking} />
+      <Button title="Stop Tracking" onPress={handleStopTracking} />
+      <Button title="Simulate Transition" onPress={handleSimulateTransition} />
       {data && data.length > 0 && (
         <View>
           {/* Get the latest entry by finding the one with the maximum timestamp */}
@@ -115,6 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+    gap: 30,
   },
   text: {
     fontSize: 18,
