@@ -14,7 +14,7 @@ public class MotionActivityTrackerModule: Module {
         Events("onMotionStateChange")
         
         // Check permissions
-        AsyncFunction("checkMotionActivityAuthStatus") { (promise: Promise) in
+        AsyncFunction("getPermissionStatus") { (promise: Promise) in
             guard CMMotionActivityManager.isActivityAvailable() else {
                 // Motion activity is not available on this device
                 promise.resolve(CMAuthorizationStatus.denied.rawValue)
