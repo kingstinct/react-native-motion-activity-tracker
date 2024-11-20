@@ -21,13 +21,13 @@
     "motion-activity-tracker",
     "MotionActivityTracker"
   ],
-  "repository": "https://github.com/RevanToma/motion-activity-tracker",
+  "repository": "https://github.com/kingstinct/react-native-motion-activity-tracker",
   "bugs": {
-    "url": "https://github.com/RevanToma/motion-activity-tracker/issues"
+    "url": "https://github.com/kingstinct/react-native-motion-activity-tracker/issues"
   },
   "author": "revan <tamrevan@gmail.com> (https://github.com/RevanToma)",
   "license": "MIT",
-  "homepage": "https://github.com/RevanToma/motion-activity-tracker#readme",
+  "homepage": "https://github.com/kingstinct/react-native-motion-activity-tracker#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.0.25",
