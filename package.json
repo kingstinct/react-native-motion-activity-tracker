@@ -9,6 +9,8 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
+    "pre-push": "npm run typecheck && npm run lint",
+    "typecheck": "tsc --noEmit",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
