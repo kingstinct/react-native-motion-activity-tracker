@@ -32,14 +32,33 @@ A React Native library to access and track motion activity data using Apple's Co
 
 {
   "expo": {
-    "ios": {
-      "infoPlist": {
-        "NSMotionUsageDescription": "This app uses motion data to track your activity."
-      }
-    },
+    "plugins": [
+      "react-native-motion-activity-tracker"
+    ]
   }
 }
+
 ```
+3. If you want to customize the iOS permission description, you can configure it like this:
+ {
+  "expo": {
+    "plugins": [
+      [
+        "react-native-motion-activity-tracker",
+        {
+          "NSMotionUsageDescription": "This app uses motion data to enhance your experience."
+        }
+      ]
+    ]
+  }
+}
+
+4. After making these changes, rebuild your app to apply the native changes:
+  
+   ```bash
+   expo prebuild
+   ```
+
 
 
 # Examples
@@ -198,6 +217,10 @@ Checks the motion activity authorization status. Returns one of the following st
 - `RESTRICTED`
 - `DENIED`
 - `AUTHORIZED`
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 
