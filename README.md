@@ -198,17 +198,26 @@ Run `npx pod-install` after installing the npm package.
 
 ## API Reference
 
-### `startTracking(): Promise<string>`
+### `startTracking(): Promise<TrackingStatus>`
 Starts real-time tracking of motion activity. Returns a promise that resolves to the initial motion state.
 
-### `stopTracking(): string`
+### `stopTracking(): Promise<TrackingStatus>`
 Stops the real-time motion tracking.
 
-### `addMotionStateChangeListener(listener: (event: MotionStateChangeEvent) => void): Subscription`
+### `addMotionStateChangeListener(listener: (event: EventPayload) => void): Subscription`
 Adds a listener to receive updates when the motion state changes.
 
-### `getHistoricalData(startDate: Date, endDate: Date): Promise<HistoricalActivity[]>`
+### `getHistoricalDataIos(startDate: Date, endDate: Date): Promise<HistoricalActivity[]>`
 Fetches historical activity data for the given date range.
+
+### `getPermissionStatusAsync(): Promise<PermissionStatus>`
+Checks the current motion activity permission status for iOS.
+
+### `requestPermissionsAsyncAndroid(): Promise<PermissionStatus>`
+Requests motion activity permissions for Android devices.
+
+### `isGooglePlayServicesAvailable: boolean`
+Indicates whether Google Play Services are available on the current Android device.
 
 ### `checkMotionActivityAuthStatus(): Promise<MotionActivityAuthStatus>`
 Checks the motion activity authorization status. Returns one of the following statuses:
