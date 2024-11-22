@@ -1,7 +1,7 @@
 import { withInfoPlist, withAndroidManifest } from "@expo/config-plugins";
 import type { ExpoConfig } from "@expo/config-types";
 
-import withMotionActivityPermissions from "../config-plugin/withMotionActivityPermissions";
+import withMotionActivityPermissions from "../plugin/src/index";
 
 interface ExpoConfigWithModResults extends ExpoConfig {
   modResults?: {
