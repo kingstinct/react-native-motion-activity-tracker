@@ -61,7 +61,7 @@ jobs:
 
       - name: Update version
         id: update_version
-        run: echo "VERSION=$(npm version ${{ github.event.inputs.release_type }} -m \"%s ${{ github.event.inputs.description }}\")" >> $GITHUB_ENV
+        run: echo "VERSION=$(npm version ${{ github.event.inputs.release_type }} -m '%s ${{ github.event.inputs.description }}')" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: npm install

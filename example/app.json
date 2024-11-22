@@ -11,6 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+      "plugins": [
+        "react-native-motion-activity-tracker"
+      ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.motionactivitytracker.example"
@@ -21,7 +24,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "expo.modules.motionactivitytracker.example",
-      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
