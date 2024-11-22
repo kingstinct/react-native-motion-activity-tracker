@@ -17,9 +17,21 @@ const withMotionActivityPermissions: ConfigPlugin = (config) => {
   config = withAndroidManifest(config, (config) => {
     const androidManifest = config.modResults;
     const permissions = androidManifest.manifest["uses-permission"] || [];
-    permissions.push({
-      $: { "android:name": "android.permission.ACTIVITY_RECOGNITION" },
-    });
+
+    // Check if the permission already exists
+    const hasActivityRecognitionPermission = permissions.some(
+      (permission) =>
+        permission.$["android:name"] ===
+        "android.permission.ACTIVITY_RECOGNITION",
+    );
+
+    // Add the permission only if it doesn't exist
+    if (!hasActivityRecognitionPermission) {
+      permissions.push({
+        $: { "android:name": "android.permission.ACTIVITY_RECOGNITION" },
+      });
+    }
+
     androidManifest.manifest["uses-permission"] = permissions;
     return config;
   });

@@ -1,6 +1,7 @@
 import { withInfoPlist, withAndroidManifest } from "@expo/config-plugins";
-import withMotionActivityPermissions from "../config-plugin/withMotionActivityPermissions";
 import type { ExpoConfig } from "@expo/config-types";
+
+import withMotionActivityPermissions from "../config-plugin/withMotionActivityPermissions";
 
 interface ExpoConfigWithModResults extends ExpoConfig {
   modResults?: {
@@ -8,7 +9,7 @@ interface ExpoConfigWithModResults extends ExpoConfig {
     NSMotionUsageDescription?: string;
     // For Android
     manifest?: {
-      "uses-permission"?: Array<{ $: { "android:name": string } }>;
+      "uses-permission"?: { $: { "android:name": string } }[];
     };
   };
 }
@@ -19,7 +20,7 @@ jest.mock("@expo/config-plugins", () => ({
       ...config,
       modResults: {
         ...config.modResults,
-        NSMotionUsageDescription: undefined, 
+        NSMotionUsageDescription: undefined,
       },
     };
     const modifiedConfig = callback(updatedConfig);
@@ -35,7 +36,7 @@ jest.mock("@expo/config-plugins", () => ({
         ...config.modResults,
         manifest: {
           ...config.modResults?.manifest,
-          "uses-permission": [], 
+          "uses-permission": [],
         },
       },
     };
@@ -61,13 +62,13 @@ describe("withMotionActivityPermissions", () => {
       withMotionActivityPermissions(config);
 
     expect(updatedConfig.modResults?.NSMotionUsageDescription).toBe(
-      "This app uses motion activity tracking."
+      "This app uses motion activity tracking.",
     );
 
     expect(withInfoPlist).toHaveBeenCalled();
   });
 
-  it("should add Android motion activity recognition permission", () => {
+  it("should add Android motion activity recognition permission if it does not exist", () => {
     const config: ExpoConfigWithModResults = {
       name: "mock-app",
       slug: "mock-app",
@@ -85,7 +86,36 @@ describe("withMotionActivityPermissions", () => {
     expect(permissions).toEqual(
       expect.arrayContaining([
         { $: { "android:name": "android.permission.ACTIVITY_RECOGNITION" } },
-      ])
+      ]),
+    );
+
+    expect(withAndroidManifest).toHaveBeenCalled();
+  });
+
+  it("should not add duplicate Android motion activity recognition permission", () => {
+    const config: ExpoConfigWithModResults = {
+      name: "mock-app",
+      slug: "mock-app",
+      modResults: {
+        manifest: {
+          "uses-permission": [
+            {
+              $: { "android:name": "android.permission.ACTIVITY_RECOGNITION" },
+            },
+          ],
+        },
+      },
+    };
+
+    const updatedConfig: ExpoConfigWithModResults =
+      withMotionActivityPermissions(config);
+
+    const permissions = updatedConfig.modResults?.manifest?.["uses-permission"];
+    expect(permissions).toHaveLength(1); // Ensure no duplicates are added
+    expect(permissions).toEqual(
+      expect.arrayContaining([
+        { $: { "android:name": "android.permission.ACTIVITY_RECOGNITION" } },
+      ]),
     );
 
     expect(withAndroidManifest).toHaveBeenCalled();
