@@ -1,6 +1,6 @@
 # react-native-motion-activity-tracker
 
-[![Test Status](https://github.com/YourGithubUsername/react-native-motion-activity-tracker/actions/workflows/test.yml/badge.svg)](https://github.com/YourGithubUsername/react-native-motion-activity-tracker/actions/workflows/test.yml)
+[![Test Status](https://github.com/Kingstinct/react-native-motion-activity-tracker/actions/workflows/test.yml/badge.svg)](https://github.com/Kingstinct/react-native-motion-activity-tracker/actions/workflows/test.yml)
 [![Latest version on NPM](https://img.shields.io/npm/v/react-native-motion-activity-tracker)](https://www.npmjs.com/package/react-native-motion-activity-tracker)
 [![Discord](https://dcbadge.vercel.app/api/server/5wQGsRfS?style=flat)](https://discord.gg/5wQGsRfS)
 
