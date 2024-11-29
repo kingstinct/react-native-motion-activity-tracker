@@ -1,35 +1,37 @@
 import * as MotionActivityTracker from "motion-activity-tracker";
 import React, { useEffect, useState } from "react";
 import { Text, View, Button, StyleSheet, Platform } from "react-native";
-
+import {PermissionStatus,HistoricalActivity,TrackingStatus,ActivityType, ActivityChangeEvent, TransitionType, Confidence} from "motion-activity-tracker/types"
+import { isGooglePlayServicesAvailable } from "react-native-motion-activity-tracker";
 export default function App() {
+  console.log("PermissionStatus!!!!!!!!!!",PermissionStatus.NOT_DETERMINED)
   const [message, setMessage] = useState("Initializing..."),
     [tracking, setTracking] = useState(false),
     [data, setData] = useState<
-      MotionActivityTracker.HistoricalActivity[] | undefined
+      HistoricalActivity[] | undefined
     >(),
     [permissionStatus, setPermissionStatus] =
-      useState<MotionActivityTracker.PermissionStatus>(
-        MotionActivityTracker.PermissionStatus.NOT_DETERMINED,
+      useState<PermissionStatus>(
+        PermissionStatus.NOT_DETERMINED,
       ),
     [trackingStatus, setTrackingStatus] =
-      useState<MotionActivityTracker.TrackingStatus>(
-        MotionActivityTracker.TrackingStatus.STOPPED,
+      useState<TrackingStatus>(
+        TrackingStatus.STOPPED,
       ),
     [enterTransition, setEnterTransition] =
-      useState<MotionActivityTracker.ActivityType>(
-        MotionActivityTracker.ActivityType.UNKNOWN,
+      useState<ActivityType>(
+        ActivityType.UNKNOWN,
       ),
     [exitTransition, setExitTransition] =
-      useState<MotionActivityTracker.ActivityType>(
-        MotionActivityTracker.ActivityType.UNKNOWN,
+      useState<ActivityType>(
+        ActivityType.UNKNOWN,
       ),
     startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     endDate = new Date();
 
   useEffect(() => {
     const setActivityHistoricalData = async () => {
-      const data = await MotionActivityTracker.getHistoricalDataIos(
+      const data = await MotionActivityTracker.getHistoricalData(
         startDate,
         endDate,
       );
@@ -99,10 +101,10 @@ export default function App() {
   };
 
   const handleSimulateTransition = () => {
-    const event: MotionActivityTracker.ActivityChangeEvent = {
-      activityType: MotionActivityTracker.ActivityType.WALKING,
-      transitionType: MotionActivityTracker.TransitionType.ENTER,
-      confidence: MotionActivityTracker.Confidence.UNKNOWN,
+    const event: ActivityChangeEvent = {
+      activityType: ActivityType.WALKING,
+      transitionType: TransitionType.ENTER,
+      confidence: Confidence.UNKNOWN,
       timestamp: new Date().getTime(),
     };
 
@@ -113,7 +115,7 @@ export default function App() {
     <View style={styles.container}>
       <Text
         style={styles.text}
-      >{`Is Google Play available: ${MotionActivityTracker.isGooglePlayServicesAvailable}`}</Text>
+      >{`Is Google Play available: ${isGooglePlayServicesAvailable}`}</Text>
       <Text
         style={styles.text}
       >{`Permission Status: ${permissionStatus}`}</Text>
