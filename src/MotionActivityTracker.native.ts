@@ -1,14 +1,14 @@
 import { EventEmitter, Subscription } from "expo-modules-core";
 import { PermissionsAndroid, Platform } from "react-native";
 
+import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
 import {
   PermissionStatus,
   ActivityChangeEvent,
   TrackingStatus,
   HistoricalActivity,
   EventPayload,
-} from "./MotionActivityTracker.types";
-import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
+} from "./types";
 
 export const isGooglePlayServicesAvailable: boolean =
   MotionActivityTrackerModule.isGooglePlayServicesAvailable ?? false;
@@ -79,9 +79,17 @@ export function simulateActivityTransition(event: ActivityChangeEvent): void {
   );
 }
 
-export async function getHistoricalDataIos(
+/**
+ * Get historical motion activity data from the device for iOS.
+ * Only supported on iOS. On other platforms, it will return a warning and an empty array.
+ * @param startDate - The start date of the historical data to fetch.
+ * @param endDate - The end date of the historical data to fetch. Defaults to the current date.
+ * @returns A promise that resolves to an array of historical motion activity data.
+ */
+
+export async function getHistoricalData(
   startDate: Date,
-  endDate: Date,
+  endDate: Date = new Date(),
 ): Promise<HistoricalActivity[]> {
   const startTimestamp = startDate.getTime(),
     endTimestamp = endDate.getTime();
@@ -92,6 +100,8 @@ export async function getHistoricalDataIos(
       endTimestamp,
     );
   }
+
+  console.warn("getHistoricalData is only supported on iOS");
 
   return [];
 }

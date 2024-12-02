@@ -1,2 +1,1 @@
-export * from "./MotionActivityTracker";
-export * from "./MotionActivityTracker.types";
+export * from "./MotionActivityTracker.native";

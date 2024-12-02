@@ -1,35 +1,38 @@
 import * as MotionActivityTracker from "motion-activity-tracker";
+import {
+  PermissionStatus,
+  HistoricalActivity,
+  TrackingStatus,
+  ActivityType,
+  ActivityChangeEvent,
+  TransitionType,
+  Confidence,
+} from "motion-activity-tracker/types";
 import React, { useEffect, useState } from "react";
 import { Text, View, Button, StyleSheet, Platform } from "react-native";
 
 export default function App() {
   const [message, setMessage] = useState("Initializing..."),
     [tracking, setTracking] = useState(false),
-    [data, setData] = useState<
-      MotionActivityTracker.HistoricalActivity[] | undefined
-    >(),
-    [permissionStatus, setPermissionStatus] =
-      useState<MotionActivityTracker.PermissionStatus>(
-        MotionActivityTracker.PermissionStatus.NOT_DETERMINED,
-      ),
-    [trackingStatus, setTrackingStatus] =
-      useState<MotionActivityTracker.TrackingStatus>(
-        MotionActivityTracker.TrackingStatus.STOPPED,
-      ),
-    [enterTransition, setEnterTransition] =
-      useState<MotionActivityTracker.ActivityType>(
-        MotionActivityTracker.ActivityType.UNKNOWN,
-      ),
-    [exitTransition, setExitTransition] =
-      useState<MotionActivityTracker.ActivityType>(
-        MotionActivityTracker.ActivityType.UNKNOWN,
-      ),
+    [data, setData] = useState<HistoricalActivity[] | undefined>(),
+    [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
+      PermissionStatus.NOT_DETERMINED,
+    ),
+    [trackingStatus, setTrackingStatus] = useState<TrackingStatus>(
+      TrackingStatus.STOPPED,
+    ),
+    [enterTransition, setEnterTransition] = useState<ActivityType>(
+      ActivityType.UNKNOWN,
+    ),
+    [exitTransition, setExitTransition] = useState<ActivityType>(
+      ActivityType.UNKNOWN,
+    ),
     startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     endDate = new Date();
 
   useEffect(() => {
     const setActivityHistoricalData = async () => {
-      const data = await MotionActivityTracker.getHistoricalDataIos(
+      const data = await MotionActivityTracker.getHistoricalData(
         startDate,
         endDate,
       );
@@ -51,15 +54,11 @@ export default function App() {
         console.log("New Motion State:", payload);
 
         payload.events.forEach((event) => {
-          if (
-            event.transitionType === MotionActivityTracker.TransitionType.ENTER
-          ) {
+          if (event.transitionType === TransitionType.ENTER) {
             setEnterTransition(event.activityType);
           }
 
-          if (
-            event.transitionType === MotionActivityTracker.TransitionType.EXIT
-          ) {
+          if (event.transitionType === TransitionType.EXIT) {
             setExitTransition(event.activityType);
           }
         });
@@ -99,10 +98,10 @@ export default function App() {
   };
 
   const handleSimulateTransition = () => {
-    const event: MotionActivityTracker.ActivityChangeEvent = {
-      activityType: MotionActivityTracker.ActivityType.WALKING,
-      transitionType: MotionActivityTracker.TransitionType.ENTER,
-      confidence: MotionActivityTracker.Confidence.UNKNOWN,
+    const event: ActivityChangeEvent = {
+      activityType: ActivityType.WALKING,
+      transitionType: TransitionType.ENTER,
+      confidence: Confidence.UNKNOWN,
       timestamp: new Date().getTime(),
     };
 
