@@ -207,7 +207,7 @@ Stops the real-time motion tracking.
 ### `addMotionStateChangeListener(listener: (event: EventPayload) => void): Subscription`
 Adds a listener to receive updates when the motion state changes.
 
-### `getHistoricalDataIos(startDate: Date, endDate: Date): Promise<HistoricalActivity[]>`
+### `getHistoricalData(startDate: Date, endDate: Date): Promise<HistoricalActivity[]>`
 Fetches historical activity data for the given date range.
 
 ### `getPermissionStatusAsync(): Promise<PermissionStatus>`

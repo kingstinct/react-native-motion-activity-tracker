@@ -13,7 +13,6 @@ import { Text, View, Button, StyleSheet, Platform } from "react-native";
 
 export default function App() {
   const [message, setMessage] = useState("Initializing..."),
-    [tracking, setTracking] = useState(false),
     [data, setData] = useState<HistoricalActivity[] | undefined>(),
     [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
       PermissionStatus.NOT_DETERMINED,
