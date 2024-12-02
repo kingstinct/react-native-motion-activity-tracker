@@ -1,31 +1,33 @@
 import * as MotionActivityTracker from "motion-activity-tracker";
+import {
+  PermissionStatus,
+  HistoricalActivity,
+  TrackingStatus,
+  ActivityType,
+  ActivityChangeEvent,
+  TransitionType,
+  Confidence,
+} from "motion-activity-tracker/types";
 import React, { useEffect, useState } from "react";
 import { Text, View, Button, StyleSheet, Platform } from "react-native";
-import {PermissionStatus,HistoricalActivity,TrackingStatus,ActivityType, ActivityChangeEvent, TransitionType, Confidence} from "motion-activity-tracker/types"
 import { isGooglePlayServicesAvailable } from "react-native-motion-activity-tracker";
 export default function App() {
-  console.log("PermissionStatus!!!!!!!!!!",PermissionStatus.NOT_DETERMINED)
+  console.log("PermissionStatus!!!!!!!!!!", PermissionStatus.NOT_DETERMINED);
   const [message, setMessage] = useState("Initializing..."),
     [tracking, setTracking] = useState(false),
-    [data, setData] = useState<
-      HistoricalActivity[] | undefined
-    >(),
-    [permissionStatus, setPermissionStatus] =
-      useState<PermissionStatus>(
-        PermissionStatus.NOT_DETERMINED,
-      ),
-    [trackingStatus, setTrackingStatus] =
-      useState<TrackingStatus>(
-        TrackingStatus.STOPPED,
-      ),
-    [enterTransition, setEnterTransition] =
-      useState<ActivityType>(
-        ActivityType.UNKNOWN,
-      ),
-    [exitTransition, setExitTransition] =
-      useState<ActivityType>(
-        ActivityType.UNKNOWN,
-      ),
+    [data, setData] = useState<HistoricalActivity[] | undefined>(),
+    [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
+      PermissionStatus.NOT_DETERMINED,
+    ),
+    [trackingStatus, setTrackingStatus] = useState<TrackingStatus>(
+      TrackingStatus.STOPPED,
+    ),
+    [enterTransition, setEnterTransition] = useState<ActivityType>(
+      ActivityType.UNKNOWN,
+    ),
+    [exitTransition, setExitTransition] = useState<ActivityType>(
+      ActivityType.UNKNOWN,
+    ),
     startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     endDate = new Date();
 
@@ -53,15 +55,11 @@ export default function App() {
         console.log("New Motion State:", payload);
 
         payload.events.forEach((event) => {
-          if (
-            event.transitionType === MotionActivityTracker.TransitionType.ENTER
-          ) {
+          if (event.transitionType === TransitionType.ENTER) {
             setEnterTransition(event.activityType);
           }
 
-          if (
-            event.transitionType === MotionActivityTracker.TransitionType.EXIT
-          ) {
+          if (event.transitionType === TransitionType.EXIT) {
             setExitTransition(event.activityType);
           }
         });
