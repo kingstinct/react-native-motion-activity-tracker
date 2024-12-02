@@ -10,9 +10,8 @@ import {
 } from "motion-activity-tracker/types";
 import React, { useEffect, useState } from "react";
 import { Text, View, Button, StyleSheet, Platform } from "react-native";
-import { isGooglePlayServicesAvailable } from "react-native-motion-activity-tracker";
+
 export default function App() {
-  console.log("PermissionStatus!!!!!!!!!!", PermissionStatus.NOT_DETERMINED);
   const [message, setMessage] = useState("Initializing..."),
     [tracking, setTracking] = useState(false),
     [data, setData] = useState<HistoricalActivity[] | undefined>(),
@@ -113,7 +112,7 @@ export default function App() {
     <View style={styles.container}>
       <Text
         style={styles.text}
-      >{`Is Google Play available: ${isGooglePlayServicesAvailable}`}</Text>
+      >{`Is Google Play available: ${MotionActivityTracker.isGooglePlayServicesAvailable}`}</Text>
       <Text
         style={styles.text}
       >{`Permission Status: ${permissionStatus}`}</Text>

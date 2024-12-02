@@ -1,6 +1,7 @@
 import { EventEmitter, Subscription } from "expo-modules-core";
 import { PermissionsAndroid, Platform } from "react-native";
 
+import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
 import {
   PermissionStatus,
   ActivityChangeEvent,
@@ -8,9 +9,6 @@ import {
   HistoricalActivity,
   EventPayload,
 } from "./types";
-import MotionActivityTrackerModule from "./MotionActivityTrackerModule";
-
-
 
 export const isGooglePlayServicesAvailable: boolean =
   MotionActivityTrackerModule.isGooglePlayServicesAvailable ?? false;
@@ -103,9 +101,7 @@ export async function getHistoricalData(
     );
   }
 
-  console.warn(
-    "getHistoricalData is only supported on iOS",
-  );
+  console.warn("getHistoricalData is only supported on iOS");
 
   return [];
 }

@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-  function UnavailableFn<T = unknown>(retVal: T) {
+function UnavailableFn<T = unknown>(retVal: T) {
   let hasWarned = false;
   return () => {
     if (!hasWarned) {
@@ -13,10 +13,11 @@ import { Platform } from "react-native";
   };
 }
 
-
 export const getPermissionStatusAsync = UnavailableFn(
   Promise.resolve("PLATFORM_NOT_SUPPORTED"),
 );
+
+export const isGooglePlayServicesAvailable = UnavailableFn(false);
 
 export const startTracking = UnavailableFn(Promise.resolve("FAILED"));
 export const stopTracking = UnavailableFn(Promise.resolve("FAILED"));
